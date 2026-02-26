@@ -128,13 +128,19 @@ else
   success "shaping-skills already present"
 fi
 
+# ── 11. Install + start OpenClaw gateway service ─────────────────────────────
+info "Installing OpenClaw gateway service..."
+openclaw gateway install
+success "Gateway service installed"
+
 # ── Done ─────────────────────────────────────────────────────────────────────
 echo ""
 echo "✅ Setup complete!"
 echo ""
 echo "Remaining manual steps:"
 echo "  1. openclaw gateway start"
-echo "  2. Clone your dev repos into ~/src/"
+echo "  2. Copy ~/.openclaw/openclaw.json from old machine"
+echo "  3. Clone your dev repos into ~/src/"
 echo ""
 
 # Refresh docker group membership so docker works without sudo immediately

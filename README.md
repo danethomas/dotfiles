@@ -76,7 +76,10 @@ bash <(curl -fsSL https://raw.githubusercontent.com/danethomas/dotfiles/main/ins
 op signin
 bash <(curl -fsSL https://raw.githubusercontent.com/danethomas/dotfiles/main/install.sh)
 
-# 3. Start the gateway
+# 3. Copy openclaw.json from the old machine (not in any repo — manual step)
+# scp ubuntu@old-machine:~/.openclaw/openclaw.json ~/.openclaw/openclaw.json
+
+# 4. Start the gateway (install.sh runs gateway install, so this should just work)
 openclaw gateway start
 
 # 4. Clone dev repos into ~/src/
