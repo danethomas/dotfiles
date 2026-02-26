@@ -23,7 +23,13 @@ warn()    { echo "⚠ $*"; }
 
 # ── 1. Package dependencies ───────────────────────────────────────────────────
 info "Installing system packages..."
-bash "$(dirname "$0")/packages/ubuntu.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
+if [ -f "$SCRIPT_DIR/packages/ubuntu.sh" ]; then
+  bash "$SCRIPT_DIR/packages/ubuntu.sh"
+else
+  # Running via curl pipe — fetch packages script directly from GitHub
+  bash <(curl -fsSL https://raw.githubusercontent.com/danethomas/dotfiles/main/packages/ubuntu.sh)
+fi
 
 # ── 2. 1Password sign-in ──────────────────────────────────────────────────────
 if ! op whoami &>/dev/null; then
