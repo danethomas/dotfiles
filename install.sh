@@ -23,7 +23,8 @@ warn()    { echo "⚠ $*"; }
 
 # ── 1. Package dependencies ───────────────────────────────────────────────────
 info "Installing system packages..."
-curl -fsSL https://raw.githubusercontent.com/danethomas/dotfiles/main/packages/ubuntu.sh | bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+bash "$SCRIPT_DIR/packages/ubuntu.sh"
 
 # ── 2. 1Password sign-in ──────────────────────────────────────────────────────
 if ! op whoami &>/dev/null; then
