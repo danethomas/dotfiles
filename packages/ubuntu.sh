@@ -115,6 +115,8 @@ fi
 # ── Homebrew ──────────────────────────────────────────────────────────────────
 if ! command -v brew &>/dev/null; then
   info "Installing Homebrew..."
+  sudo mkdir -p /home/linuxbrew/.linuxbrew
+  sudo chown -R "$USER" /home/linuxbrew/.linuxbrew
   NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   # Add brew to PATH for this session
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
