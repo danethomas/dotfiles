@@ -27,6 +27,11 @@ su - ubuntu
 
 All paths in this setup assume `~/` resolves to `/home/ubuntu`. Running as root will break them.
 
+> **Note:** If you copy SSH keys or create `.ssh` directories using `sudo`, the home directory can end up root-owned. Fix it before running the install script:
+> ```bash
+> chown -R ubuntu:ubuntu /home/ubuntu
+> ```
+
 ## Prerequisites
 
 - Fresh Ubuntu (ARM64 or x86_64)
