@@ -74,9 +74,12 @@ fi
 
 # ── 5a. Upload SSH key to GitHub (always attempt — idempotent) ────────────────
 info "Uploading SSH key to GitHub..."
-gh ssh-key add ~/.ssh/id_ed25519.pub --title "$(hostname)-$(date +%Y%m%d)" 2>/dev/null \
-  && success "SSH key uploaded to GitHub" \
-  || success "SSH key already on GitHub"
+if gh ssh-key add ~/.ssh/id_ed25519.pub --title "$(hostname)-$(date +%Y%m%d)"; then
+  success "SSH key uploaded to GitHub"
+else
+  warn "SSH key upload failed — add manually at https://github.com/settings/ssh/new"
+  warn "$(cat ~/.ssh/id_ed25519.pub)"
+fi
 
 # ── 6. Tailscale ─────────────────────────────────────────────────────────────
 if ! tailscale status &>/dev/null 2>&1; then
