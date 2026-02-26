@@ -90,6 +90,11 @@ else
   success "Tailscale already connected"
 fi
 
+# Allow non-root tailscale serve (so OpenClaw can proxy without sudo)
+info "Setting Tailscale operator to $USER..."
+sudo tailscale set --operator="$USER"
+success "Tailscale operator set"
+
 # ── 7. OpenClaw workspace ─────────────────────────────────────────────────────
 if [ ! -d ~/.openclaw/workspace/.git ]; then
   info "Cloning OpenClaw workspace (sparky)..."

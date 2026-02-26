@@ -111,3 +111,26 @@ if ! command -v openclaw &>/dev/null; then
 else
   success "OpenClaw already installed ($(openclaw --version 2>/dev/null || echo 'version unknown'))"
 fi
+
+# ── Homebrew ──────────────────────────────────────────────────────────────────
+if ! command -v brew &>/dev/null; then
+  info "Installing Homebrew..."
+  NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  # Add brew to PATH for this session
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  success "Homebrew installed"
+else
+  success "Homebrew already installed"
+fi
+
+# Ensure brew is in PATH
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 2>/dev/null || true
+
+# ── gog (Google Workspace CLI) ────────────────────────────────────────────────
+if ! command -v gog &>/dev/null; then
+  info "Installing gog..."
+  brew install steipete/tap/gogcli
+  success "gog installed"
+else
+  success "gog already installed ($(gog --version 2>/dev/null || echo 'version unknown'))"
+fi
