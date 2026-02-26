@@ -29,9 +29,9 @@ else
   eval "$(/usr/local/bin/brew shellenv)"
 fi
 
-# ── Base tools ────────────────────────────────────────────────────────────────
+# ── Base tools (via brew, avoids Xcode CLI trigger) ──────────────────────────
 for pkg in git curl jq; do
-  if ! command -v "$pkg" &>/dev/null; then
+  if ! brew list "$pkg" &>/dev/null; then
     brew install "$pkg"
     success "$pkg installed"
   else

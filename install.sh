@@ -30,11 +30,13 @@ PACKAGES_DIR="$SCRIPT_DIR/packages"
 if [ ! -d "$PACKAGES_DIR" ]; then
   info "Fetching dotfiles repo for packages..."
   if [ ! -d "$HOME/.local/share/chezmoi/.git" ]; then
-    if command -v chezmoi &>/dev/null; then
-      chezmoi init "$DOTFILES_REPO"
-    else
-      git clone "https://github.com/$DOTFILES_REPO.git" "$HOME/.local/share/chezmoi"
-    fi
+    mkdir -p "$HOME/.local/share/chezmoi"
+    # Use curl to fetch packages without triggering Xcode git stub on macOS
+    for f in packages/macos.sh packages/ubuntu.sh; do
+      mkdir -p "$HOME/.local/share/chezmoi/$(dirname $f)"
+      curl -fsSL "https://raw.githubusercontent.com/$DOTFILES_REPO/main/$f" \
+        -o "$HOME/.local/share/chezmoi/$f"
+    done
   fi
   PACKAGES_DIR="$HOME/.local/share/chezmoi/packages"
   SCRIPT_DIR="$HOME/.local/share/chezmoi"
