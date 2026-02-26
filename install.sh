@@ -59,10 +59,6 @@ if [ ! -f ~/.ssh/id_ed25519 ]; then
   mkdir -p ~/.ssh && chmod 700 ~/.ssh
   ssh-keygen -t ed25519 -C "$GIT_EMAIL" -f ~/.ssh/id_ed25519 -N ""
   success "SSH key generated: ~/.ssh/id_ed25519"
-  info "Adding SSH key to GitHub..."
-  gh auth login --with-token <<< "$(op read 'op://Keys/GitHub PAT openclaw/credential')"
-  gh ssh-key add ~/.ssh/id_ed25519.pub --title "$(hostname)-$(date +%Y%m%d)"
-  success "SSH key added to GitHub"
 else
   success "SSH key already exists"
 fi
@@ -75,6 +71,12 @@ if ! gh auth status &>/dev/null; then
 else
   success "GitHub CLI already authenticated"
 fi
+
+# ── 5a. Upload SSH key to GitHub (always attempt — idempotent) ────────────────
+info "Uploading SSH key to GitHub..."
+gh ssh-key add ~/.ssh/id_ed25519.pub --title "$(hostname)-$(date +%Y%m%d)" 2>/dev/null \
+  && success "SSH key uploaded to GitHub" \
+  || success "SSH key already on GitHub"
 
 # ── 6. Tailscale ─────────────────────────────────────────────────────────────
 if ! tailscale status &>/dev/null 2>&1; then
