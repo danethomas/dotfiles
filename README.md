@@ -42,10 +42,16 @@ dotfiles/
 
 **On the old machine first:**
 ```bash
-# Export everything to 1Password (credentials + openclaw.json)
+# 1. Backup workspace to GitHub (captures anything since last cron run)
+bash ~/.openclaw/workspace/scripts/workspace-backup.sh
+
+# 2. Export credentials to 1Password
 eval $(op signin) && bash ~/.openclaw/workspace/scripts/export-credentials-to-1password.sh
 
-# Stop the gateway and disconnect from Tailscale
+# 3. Optional: backup again to catch anything written during the export
+bash ~/.openclaw/workspace/scripts/workspace-backup.sh
+
+# 4. Stop the gateway and disconnect from Tailscale
 openclaw gateway stop
 sudo tailscale down
 ```
