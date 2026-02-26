@@ -1,0 +1,27 @@
+[user]
+  name  = {{ .name }}
+  email = {{ .email }}
+
+[core]
+  editor     = nano
+  autocrlf   = input
+  hooksPath  = .githooks
+
+[init]
+  defaultBranch = main
+
+[push]
+  default     = current
+  autoSetupRemote = true
+
+[pull]
+  rebase = false
+
+[alias]
+  st  = status
+  co  = checkout
+  br  = branch
+  lg  = log --oneline --graph --decorate --all
+
+[credential]
+  helper = store
