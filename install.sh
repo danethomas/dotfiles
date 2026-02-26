@@ -134,5 +134,11 @@ echo "✅ Setup complete!"
 echo ""
 echo "Remaining manual steps:"
 echo "  1. openclaw gateway start"
-echo "  2. docker: re-login or run 'newgrp docker' to use without sudo"
-echo "  3. Clone your dev repos into ~/src/"
+echo "  2. Clone your dev repos into ~/src/"
+echo ""
+
+# Refresh docker group membership so docker works without sudo immediately
+if groups "$USER" 2>/dev/null | grep -q docker || id -nG 2>/dev/null | grep -q docker; then
+  echo "↻ Refreshing Docker group membership..."
+  exec newgrp docker
+fi
