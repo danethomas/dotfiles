@@ -110,9 +110,17 @@ fi
 info "Restoring OpenClaw credentials from 1Password..."
 bash ~/.openclaw/workspace/scripts/import-credentials-from-1password.sh
 
-# ── 10. src/ directory ───────────────────────────────────────────────────────
+# ── 10. src/ directory + shaping-skills ──────────────────────────────────────
 mkdir -p ~/src
 success "~/src ready"
+
+if [ ! -d ~/src/shaping-skills/.git ]; then
+  info "Cloning shaping-skills..."
+  git clone https://github.com/rjs/shaping-skills.git ~/src/shaping-skills
+  success "shaping-skills cloned"
+else
+  success "shaping-skills already present"
+fi
 
 # ── Done ─────────────────────────────────────────────────────────────────────
 echo ""
@@ -122,3 +130,7 @@ echo "Remaining manual steps:"
 echo "  1. Copy ~/.openclaw/openclaw.json from old machine (or 1Password secure note)"
 echo "  2. openclaw gateway start"
 echo "  3. docker: re-login or run 'newgrp docker' to use without sudo"
+echo "  4. Clone dev repos manually:"
+echo "       git clone git@github.com:danethomas/essence-app.git ~/src/essence-app"
+echo "       git clone git@github.com:danethomas/essence-bot.git ~/src/essence-bot"
+echo "       git clone git@github.com:danethomas/essence.ai.git ~/src/essence.ai"
