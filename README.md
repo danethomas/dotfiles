@@ -61,10 +61,8 @@ bash <(curl -fsSL https://raw.githubusercontent.com/danethomas/dotfiles/main/ins
 # 3. Start the gateway
 openclaw gateway start
 
-# 4. Clone dev repos
-git clone git@github.com:danethomas/essence-app.git ~/src/essence-app
-git clone git@github.com:danethomas/essence-bot.git ~/src/essence-bot
-git clone git@github.com:danethomas/essence.ai.git ~/src/essence.ai
+# 4. Clone dev repos into ~/src/
+# git clone git@github.com:you/your-repo.git ~/src/your-repo
 ```
 
 That's it. Say hi 👋
