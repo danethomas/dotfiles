@@ -24,10 +24,26 @@ warn()    { echo "⚠ $*"; }
 # ── 1. Package dependencies ───────────────────────────────────────────────────
 info "Installing system packages..."
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGES_DIR="$SCRIPT_DIR/packages"
+
+# If running via curl pipe, packages/ won't exist — clone chezmoi repo first
+if [ ! -d "$PACKAGES_DIR" ]; then
+  info "Fetching dotfiles repo for packages..."
+  if [ ! -d "$HOME/.local/share/chezmoi/.git" ]; then
+    if command -v chezmoi &>/dev/null; then
+      chezmoi init "$DOTFILES_REPO"
+    else
+      git clone "https://github.com/$DOTFILES_REPO.git" "$HOME/.local/share/chezmoi"
+    fi
+  fi
+  PACKAGES_DIR="$HOME/.local/share/chezmoi/packages"
+  SCRIPT_DIR="$HOME/.local/share/chezmoi"
+fi
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  bash "$SCRIPT_DIR/packages/macos.sh"
+  bash "$PACKAGES_DIR/macos.sh"
 else
-  bash "$SCRIPT_DIR/packages/ubuntu.sh"
+  bash "$PACKAGES_DIR/ubuntu.sh"
 fi
 
 # ── 2. 1Password sign-in ──────────────────────────────────────────────────────
