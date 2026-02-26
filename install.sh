@@ -89,7 +89,7 @@ fi
 if [ ! -d ~/.openclaw/workspace/.git ]; then
   info "Cloning OpenClaw workspace (sparky)..."
   mkdir -p ~/.openclaw
-  git clone "https://github.com/$WORKSPACE_REPO.git" ~/.openclaw/workspace
+  git clone "git@github.com:$WORKSPACE_REPO.git" ~/.openclaw/workspace
   success "Workspace cloned"
 else
   warn "Workspace already exists — pull manually if needed: git -C ~/.openclaw/workspace pull"
