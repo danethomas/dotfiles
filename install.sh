@@ -92,7 +92,22 @@ else
   warn "Workspace already exists — pull manually if needed: git -C ~/.openclaw/workspace pull"
 fi
 
-# ── 8. src/ directory ────────────────────────────────────────────────────────
+# ── 8. Restore OpenClaw config snapshots (cron jobs, hooks, exec-approvals) ──
+SNAPSHOTS=~/.openclaw/workspace/config-snapshots
+if [ -d "$SNAPSHOTS" ]; then
+  info "Restoring OpenClaw config snapshots..."
+  mkdir -p ~/.openclaw/cron ~/.openclaw/hooks/transforms
+  [ -f "$SNAPSHOTS/cron-jobs.json" ]   && cp "$SNAPSHOTS/cron-jobs.json" ~/.openclaw/cron/jobs.json
+  [ -d "$SNAPSHOTS/hooks-transforms" ] && cp -r "$SNAPSHOTS/hooks-transforms/." ~/.openclaw/hooks/transforms/
+  [ -f "$SNAPSHOTS/exec-approvals.json" ] && cp "$SNAPSHOTS/exec-approvals.json" ~/.openclaw/exec-approvals.json
+  success "Config snapshots restored"
+fi
+
+# ── 9. Restore credentials from 1Password ────────────────────────────────────
+info "Restoring OpenClaw credentials from 1Password..."
+bash ~/.openclaw/workspace/scripts/import-credentials-from-1password.sh
+
+# ── 10. src/ directory ───────────────────────────────────────────────────────
 mkdir -p ~/src
 success "~/src ready"
 
@@ -101,6 +116,6 @@ echo ""
 echo "✅ Setup complete!"
 echo ""
 echo "Remaining manual steps:"
-echo "  1. openclaw gateway start"
-echo "  2. Copy ~/.openclaw/openclaw.json from old machine (or 1Password secure note)"
+echo "  1. Copy ~/.openclaw/openclaw.json from old machine (or 1Password secure note)"
+echo "  2. openclaw gateway start"
 echo "  3. docker: re-login or run 'newgrp docker' to use without sudo"
