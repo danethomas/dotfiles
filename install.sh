@@ -89,6 +89,7 @@ fi
 if [ ! -d ~/.openclaw/workspace/.git ]; then
   info "Cloning OpenClaw workspace (sparky)..."
   mkdir -p ~/.openclaw
+  rm -rf ~/.openclaw/workspace  # remove partial clone if present
   git clone "git@github.com:$WORKSPACE_REPO.git" ~/.openclaw/workspace
   success "Workspace cloned"
 else
