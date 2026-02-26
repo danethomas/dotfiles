@@ -38,6 +38,45 @@ dotfiles/
     1password-setup.md                    ← required 1Password vault items
 ```
 
+## Migrating to a new machine
+
+**On the old machine first:**
+```bash
+# 1. Export credentials to 1Password
+eval $(op signin) && bash ~/.openclaw/workspace/scripts/export-credentials-to-1password.sh
+
+# 2. Grab openclaw.json — copy somewhere safe (local file or 1Password secure note)
+cat ~/.openclaw/openclaw.json
+
+# 3. Stop the gateway
+openclaw gateway stop
+```
+
+**On the new machine:**
+```bash
+# 1. Run the one-liner — installs everything, pauses for op signin
+bash <(curl -fsSL https://raw.githubusercontent.com/danethomas/dotfiles/main/install.sh)
+
+# 2. Sign in to 1Password, then re-run (idempotent — picks up where it left off)
+op signin
+bash <(curl -fsSL https://raw.githubusercontent.com/danethomas/dotfiles/main/install.sh)
+
+# 3. Paste openclaw.json
+nano ~/.openclaw/openclaw.json
+
+# 4. Start the gateway
+openclaw gateway start
+
+# 5. Clone dev repos
+git clone git@github.com:danethomas/essence-app.git ~/src/essence-app
+git clone git@github.com:danethomas/essence-bot.git ~/src/essence-bot
+git clone git@github.com:danethomas/essence.ai.git ~/src/essence.ai
+```
+
+That's it. Say hi 👋
+
+---
+
 ## What's NOT in this repo
 
 - **OpenClaw workspace** (`~/.openclaw/workspace`) — Sparky's memory, SOUL.md, projects etc.
