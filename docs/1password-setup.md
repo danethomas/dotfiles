@@ -6,16 +6,17 @@ the OpenClaw config template.
 
 ## Required Items
 
-| 1Password Item                  | Field        | Secret                              |
-|---------------------------------|--------------|-------------------------------------|
-| `Gemini API`                    | `credential` | Gemini API key                      |
-| `GitHub PAT (openclaw)`         | `credential` | GitHub Personal Access Token        |
-| `GOG Keyring`                   | `password`   | GOG keyring password                |
-| `OpenRouter API`                | `credential` | OpenRouter API key                  |
-| `ElevenLabs API`                | `credential` | ElevenLabs API key                  |
-| `Sparky Telegram Bot`           | `credential` | Telegram bot token                  |
-| `Sparky Discord Bot`            | `credential` | Discord bot token                   |
-| `Brave Search API`              | `credential` | Brave Search API key                |
+| 1Password Item                  | Field        | Secret                              | Used for                  |
+|---------------------------------|--------------|-------------------------------------|---------------------------|
+| `Gemini API`                    | `credential` | Gemini API key                      | Memory embeddings         |
+| `GitHub PAT (openclaw)`         | `credential` | GitHub Personal Access Token        | gh auth + SSH key upload  |
+| `GOG Keyring`                   | `password`   | GOG keyring password                | Google Apps CLI           |
+| `OpenRouter API`                | `credential` | OpenRouter API key                  | OpenRouter models         |
+| `ElevenLabs API`                | `credential` | ElevenLabs API key                  | TTS (talk.apiKey)         |
+| `Sparky Telegram Bot`           | `credential` | Telegram bot token                  | OpenClaw Telegram channel |
+| `Sparky Discord Bot`            | `credential` | Discord bot token                   | OpenClaw Discord channel  |
+| `Brave Search API`              | `credential` | Brave Search API key                | Web search                |
+| `Tailscale Auth Key`            | `credential` | Tailscale reusable auth key         | tailscale up (auto-join)  |
 
 ## Quickstart
 

@@ -1,0 +1,41 @@
+# ~/.bashrc
+
+# ── History ───────────────────────────────────────────────────────────────────
+HISTSIZE=10000
+HISTFILESIZE=20000
+HISTCONTROL=ignoredups:erasedups
+shopt -s histappend
+
+# ── PATH ─────────────────────────────────────────────────────────────────────
+export PATH="/usr/local/bin:$HOME/.local/bin:$PATH"
+
+# ── Aliases ───────────────────────────────────────────────────────────────────
+alias ll='ls -lahF --color=auto'
+alias la='ls -A'
+alias l='ls -CF'
+alias ..='cd ..'
+alias ...='cd ../..'
+
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git lg'
+alias gd='git diff'
+
+alias dc='docker compose'
+alias dps='docker ps'
+
+# ── Prompt ────────────────────────────────────────────────────────────────────
+# Shows: user@host:~/path (git-branch) $
+parse_git_branch() {
+  git branch 2>/dev/null | sed -n 's/^\* //p'
+}
+PS1='\[\e[0;32m\]\u@\h\[\e[0m\]:\[\e[0;34m\]\w\[\e[0m\]\[\e[0;33m\]$(b=$(parse_git_branch); [ -n "$b" ] && echo " ($b)")\[\e[0m\] \$ '
+
+# ── Misc ─────────────────────────────────────────────────────────────────────
+export EDITOR=nano
+export LANG=en_US.UTF-8
+
+# Source local overrides if present (machine-specific, not in repo)
+[ -f ~/.bashrc.local ] && source ~/.bashrc.local

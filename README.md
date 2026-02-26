@@ -25,15 +25,17 @@ That single command:
 
 ```
 dotfiles/
-  install.sh                              ← entry point
+  install.sh                              ← entry point (SSH + gh auth + Tailscale + workspace)
   packages/
-    ubuntu.sh                             ← idempotent package installs
+    ubuntu.sh                             ← idempotent: Node, Bun, gh, Tailscale, 1Pass, Docker, OpenClaw
   home/
+    dot_bashrc                            → ~/.bashrc (aliases, prompt, PATH)
     dot_gitconfig.tmpl                    → ~/.gitconfig
-    private_dot_openclaw/
-      private_openclaw.json.tmpl          → ~/.openclaw/openclaw.json (secrets via 1Password)
+    dot_gitignore_global                  → ~/.gitignore_global (DS_Store, .env, etc.)
+    private_dot_ssh/
+      config                             → ~/.ssh/config (host aliases, key defaults)
   docs/
-    1password-setup.md                    ← required 1Password items
+    1password-setup.md                    ← required 1Password vault items
 ```
 
 ## What's NOT in this repo

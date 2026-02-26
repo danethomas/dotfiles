@@ -67,7 +67,7 @@ fi
 if ! command -v tailscale &>/dev/null; then
   info "Installing Tailscale..."
   curl -fsSL https://tailscale.com/install.sh | sh
-  success "Tailscale installed (run: sudo tailscale up)"
+  success "Tailscale installed"
 else
   success "Tailscale already installed"
 fi
@@ -75,18 +75,32 @@ fi
 # ── 1Password CLI ─────────────────────────────────────────────────────────────
 if ! command -v op &>/dev/null; then
   info "Installing 1Password CLI..."
-  curl -fsSL https://downloads.1password.com/linux/debian/amd64/stable/1password-cli-amd64-latest.deb \
-    -o /tmp/op.deb
-  # ARM64 override
   ARCH=$(dpkg --print-architecture)
-  if [ "$ARCH" = "arm64" ]; then
-    curl -fsSL https://downloads.1password.com/linux/debian/arm64/stable/1password-cli-arm64-latest.deb \
-      -o /tmp/op.deb
-  fi
+  curl -fsSL "https://downloads.1password.com/linux/debian/${ARCH}/stable/1password-cli-${ARCH}-latest.deb" \
+    -o /tmp/op.deb
   sudo dpkg -i /tmp/op.deb && rm /tmp/op.deb
   success "1Password CLI installed"
 else
   success "op already installed ($(op --version))"
+fi
+
+# ── Docker (for devcontainers) ────────────────────────────────────────────────
+if ! command -v docker &>/dev/null; then
+  info "Installing Docker..."
+  sudo install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+    | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  sudo chmod a+r /etc/apt/keyrings/docker.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+    https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+    | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  apt_update
+  sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  sudo usermod -aG docker "$USER"
+  success "Docker installed (re-login or 'newgrp docker' to use without sudo)"
+else
+  success "Docker already installed ($(docker --version))"
 fi
 
 # ── OpenClaw ──────────────────────────────────────────────────────────────────

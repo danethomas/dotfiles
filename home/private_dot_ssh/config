@@ -1,0 +1,15 @@
+# ~/.ssh/config
+# Add host aliases here. Keys live in 1Password — pull them during setup.
+# See install.sh for SSH key generation steps.
+
+Host *
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_ed25519
+  ServerAliveInterval 60
+  ServerAliveCountMax 3
+
+# Example:
+# Host myserver
+#   HostName 1.2.3.4
+#   User ubuntu
+#   IdentityFile ~/.ssh/id_ed25519
