@@ -1,7 +1,7 @@
 # 1Password Setup
 
 Before running `install.sh` on a new machine, ensure these items exist in your
-**Private** 1Password vault. chezmoi will pull secrets from here when applying
+**Keys** 1Password vault. chezmoi will pull secrets from here when applying
 the OpenClaw config template.
 
 ## Required Items
@@ -25,7 +25,7 @@ the OpenClaw config template.
 op signin
 
 # 2. Verify an item is accessible
-op read "op://Private/Gemini API/credential"
+op read "op://Keys/Gemini API/credential"
 
 # 3. Run the bootstrap
 bash install.sh
@@ -33,8 +33,8 @@ bash install.sh
 
 ## Adding a new secret
 
-1. Add the item to 1Password (Private vault)
-2. Add `{{ onepasswordRead "op://Private/<Item>/<field>" }}` to the relevant
+1. Add the item to 1Password (Keys vault)
+2. Add `{{ onepasswordRead "op://Keys/<Item>/<field>" }}` to the relevant
    `.tmpl` file in `home/`
 3. Run `chezmoi apply` to re-render templates on the current machine
 4. Commit the template change (not the secret)
