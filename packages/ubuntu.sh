@@ -95,7 +95,7 @@ if ! command -v docker &>/dev/null; then
     https://download.docker.com/linux/ubuntu \
     $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
     | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  apt_update
+  sudo apt-get update -qq  # must refresh after adding Docker repo
   sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   sudo usermod -aG docker "$USER"
   success "Docker installed (re-login or 'newgrp docker' to use without sudo)"
