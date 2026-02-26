@@ -60,7 +60,7 @@ if [ ! -f ~/.ssh/id_ed25519 ]; then
   ssh-keygen -t ed25519 -C "$GIT_EMAIL" -f ~/.ssh/id_ed25519 -N ""
   success "SSH key generated: ~/.ssh/id_ed25519"
   info "Adding SSH key to GitHub..."
-  gh auth login --with-token <<< "$(op read 'op://Private/GitHub PAT (openclaw)/credential')"
+  gh auth login --with-token <<< "$(op read 'op://Keys/GitHub PAT openclaw/credential')"
   gh ssh-key add ~/.ssh/id_ed25519.pub --title "$(hostname)-$(date +%Y%m%d)"
   success "SSH key added to GitHub"
 else
@@ -70,7 +70,7 @@ fi
 # ── 5. GitHub CLI auth ────────────────────────────────────────────────────────
 if ! gh auth status &>/dev/null; then
   info "Authenticating GitHub CLI..."
-  gh auth login --with-token <<< "$(op read 'op://Private/GitHub PAT (openclaw)/credential')"
+  gh auth login --with-token <<< "$(op read 'op://Keys/GitHub PAT openclaw/credential')"
   success "GitHub CLI authenticated"
 else
   success "GitHub CLI already authenticated"
@@ -79,7 +79,7 @@ fi
 # ── 6. Tailscale ─────────────────────────────────────────────────────────────
 if ! tailscale status &>/dev/null 2>&1; then
   info "Connecting to Tailscale..."
-  sudo tailscale up --authkey "$(op read 'op://Private/Tailscale Auth Key/credential')"
+  sudo tailscale up --authkey "$(op read 'op://Keys/Tailscale Auth Key/credential')"
   success "Tailscale connected"
 else
   success "Tailscale already connected"
