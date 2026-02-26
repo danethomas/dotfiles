@@ -45,8 +45,9 @@ dotfiles/
 # Export everything to 1Password (credentials + openclaw.json)
 eval $(op signin) && bash ~/.openclaw/workspace/scripts/export-credentials-to-1password.sh
 
-# Stop the gateway
+# Stop the gateway and disconnect from Tailscale
 openclaw gateway stop
+sudo tailscale down
 ```
 
 **On the new machine:**
