@@ -139,6 +139,12 @@ info "Installing OpenClaw gateway service..."
 openclaw gateway install
 success "Gateway service installed"
 
+# ── Fix npm global dir ownership (allows non-sudo npm install -g) ─────────────
+info "Fixing npm global directory ownership..."
+sudo chown -R "$USER":"$USER" /usr/lib/node_modules
+sudo chown -R "$USER":"$USER" /usr/bin/openclaw 2>/dev/null || true
+success "npm global dir owned by $USER"
+
 # ── Done ─────────────────────────────────────────────────────────────────────
 echo ""
 echo "✅ Setup complete!"
