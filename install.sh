@@ -167,7 +167,7 @@ success "Gateway service installed"
 if [[ "$OSTYPE" != "darwin"* ]]; then
   info "Fixing npm global directory ownership..."
   sudo chown -R "$USER":"$USER" /usr/lib/node_modules
-  sudo chown -R "$USER":"$USER" /usr/bin/openclaw 2>/dev/null || true
+  sudo chown "$USER":"$USER" /usr/bin/openclaw /usr/bin/node /usr/bin/npm /usr/bin/npx 2>/dev/null || true
   success "npm global dir owned by $USER"
 fi
 
