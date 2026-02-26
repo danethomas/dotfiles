@@ -15,6 +15,18 @@ That single command:
 3. Pulls secrets from 1Password to render config templates
 4. Clones the OpenClaw workspace repo to `~/.openclaw/workspace`
 
+## User account
+
+Run everything as a non-root user. On AWS this is `ubuntu` by default. On Hetzner (and most VPS providers) you're dropped into root — create a user first:
+
+```bash
+adduser --disabled-password --gecos "" ubuntu
+usermod -aG sudo ubuntu
+su - ubuntu
+```
+
+All paths in this setup assume `~/` resolves to `/home/ubuntu`. Running as root will break them.
+
 ## Prerequisites
 
 - Fresh Ubuntu (ARM64 or x86_64)
