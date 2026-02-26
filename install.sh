@@ -21,18 +21,21 @@ info()    { echo "▶ $*"; }
 success() { echo "✓ $*"; }
 warn()    { echo "⚠ $*"; }
 
-# ── 0. Check 1Password is signed in ──────────────────────────────────────────
-if ! op whoami &>/dev/null; then
-  echo "❌ 1Password CLI not signed in. Run: op signin"
-  exit 1
-fi
-success "1Password CLI authenticated"
-
 # ── 1. Package dependencies ───────────────────────────────────────────────────
 info "Installing system packages..."
 bash "$(dirname "$0")/packages/ubuntu.sh"
 
-# ── 2. chezmoi ────────────────────────────────────────────────────────────────
+# ── 2. 1Password sign-in ──────────────────────────────────────────────────────
+if ! op whoami &>/dev/null; then
+  echo ""
+  echo "🔐 1Password CLI needs signing in before we can continue."
+  echo "   Run: op signin"
+  echo "   Then re-run this script — it's idempotent, will skip what's done."
+  exit 0
+fi
+success "1Password CLI authenticated ($(op whoami --format=json | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d.get("email",""))' 2>/dev/null || echo 'signed in'))"
+
+# ── 3. chezmoi ────────────────────────────────────────────────────────────────
 if ! command -v chezmoi &>/dev/null; then
   info "Installing chezmoi..."
   sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
