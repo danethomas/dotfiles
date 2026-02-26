@@ -24,7 +24,11 @@ warn()    { echo "⚠ $*"; }
 # ── 1. Package dependencies ───────────────────────────────────────────────────
 info "Installing system packages..."
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-bash "$SCRIPT_DIR/packages/ubuntu.sh"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  bash "$SCRIPT_DIR/packages/macos.sh"
+else
+  bash "$SCRIPT_DIR/packages/ubuntu.sh"
+fi
 
 # ── 2. 1Password sign-in ──────────────────────────────────────────────────────
 if ! op whoami &>/dev/null; then
@@ -91,10 +95,12 @@ else
   success "Tailscale already connected"
 fi
 
-# Allow non-root tailscale serve (so OpenClaw can proxy without sudo)
-info "Setting Tailscale operator to $USER..."
-sudo tailscale set --operator="$USER"
-success "Tailscale operator set"
+# Allow non-root tailscale serve (Linux only — Mac doesn't need this)
+if [[ "$OSTYPE" != "darwin"* ]]; then
+  info "Setting Tailscale operator to $USER..."
+  sudo tailscale set --operator="$USER"
+  success "Tailscale operator set"
+fi
 
 # ── 7. OpenClaw workspace ─────────────────────────────────────────────────────
 if [ ! -d ~/.openclaw/workspace/.git ]; then
@@ -139,11 +145,13 @@ info "Installing OpenClaw gateway service..."
 openclaw gateway install
 success "Gateway service installed"
 
-# ── Fix npm global dir ownership (allows non-sudo npm install -g) ─────────────
-info "Fixing npm global directory ownership..."
-sudo chown -R "$USER":"$USER" /usr/lib/node_modules
-sudo chown -R "$USER":"$USER" /usr/bin/openclaw 2>/dev/null || true
-success "npm global dir owned by $USER"
+# ── Fix npm global dir ownership (Linux only — Mac handled in macos.sh) ───────
+if [[ "$OSTYPE" != "darwin"* ]]; then
+  info "Fixing npm global directory ownership..."
+  sudo chown -R "$USER":"$USER" /usr/lib/node_modules
+  sudo chown -R "$USER":"$USER" /usr/bin/openclaw 2>/dev/null || true
+  success "npm global dir owned by $USER"
+fi
 
 # ── Done ─────────────────────────────────────────────────────────────────────
 echo ""
