@@ -112,27 +112,15 @@ else
   success "OpenClaw already installed ($(openclaw --version 2>/dev/null || echo 'version unknown'))"
 fi
 
-# ── Homebrew ──────────────────────────────────────────────────────────────────
-if ! command -v brew &>/dev/null; then
-  info "Installing Homebrew..."
-  sudo mkdir -p /home/linuxbrew/.linuxbrew
-  sudo chown -R "$USER" /home/linuxbrew/.linuxbrew
-  NONINTERACTIVE=1 bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  # Add brew to PATH for this session
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-  success "Homebrew installed"
-else
-  success "Homebrew already installed"
-fi
-
-# Ensure brew is in PATH
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)" 2>/dev/null || true
-
 # ── gog (Google Workspace CLI) ────────────────────────────────────────────────
 if ! command -v gog &>/dev/null; then
-  info "Installing gog..."
-  brew install steipete/tap/gogcli
-  success "gog installed"
+  info "Installing gog (linux_arm64 binary)..."
+  GOG_VERSION=$(curl -s https://api.github.com/repos/steipete/gogcli/releases/latest | python3 -c "import json,sys; print(json.load(sys.stdin)['tag_name'])")
+  GOG_URL="https://github.com/steipete/gogcli/releases/download/${GOG_VERSION}/gogcli_${GOG_VERSION#v}_linux_arm64.tar.gz"
+  curl -fsSL "$GOG_URL" -o /tmp/gogcli.tar.gz
+  sudo tar -xzf /tmp/gogcli.tar.gz -C /usr/local/bin gog
+  rm /tmp/gogcli.tar.gz
+  success "gog installed ($GOG_VERSION)"
 else
   success "gog already installed ($(gog --version 2>/dev/null || echo 'version unknown'))"
 fi
