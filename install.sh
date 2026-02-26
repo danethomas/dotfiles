@@ -163,13 +163,7 @@ info "Installing OpenClaw gateway service..."
 openclaw gateway install
 success "Gateway service installed"
 
-# ── Fix npm global dir ownership (Linux only — Mac handled in macos.sh) ───────
-if [[ "$OSTYPE" != "darwin"* ]]; then
-  info "Fixing npm global directory ownership..."
-  sudo chown -R "$USER":"$USER" /usr/lib/node_modules
-  sudo chown "$USER":"$USER" /usr/bin/openclaw /usr/bin/node /usr/bin/npm /usr/bin/npx 2>/dev/null || true
-  success "npm global dir owned by $USER"
-fi
+
 
 # ── Done ─────────────────────────────────────────────────────────────────────
 echo ""

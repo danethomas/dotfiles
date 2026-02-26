@@ -103,10 +103,23 @@ else
   success "Docker already installed ($(docker --version))"
 fi
 
+# ── npm global prefix (user-owned, avoids /usr/bin permission issues) ─────────
+if [ "$(npm config get prefix)" != "$HOME/.npm-global" ]; then
+  info "Setting npm global prefix to ~/.npm-global..."
+  npm config set prefix "$HOME/.npm-global"
+  mkdir -p "$HOME/.npm-global/bin"
+  # Add to PATH if not already there
+  if ! grep -q '.npm-global/bin' "$HOME/.bashrc" 2>/dev/null; then
+    echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> "$HOME/.bashrc"
+  fi
+  export PATH="$HOME/.npm-global/bin:$PATH"
+  success "npm prefix set to ~/.npm-global"
+fi
+
 # ── OpenClaw ──────────────────────────────────────────────────────────────────
 if ! command -v openclaw &>/dev/null; then
   info "Installing OpenClaw..."
-  sudo npm install -g openclaw
+  npm install -g openclaw
   success "OpenClaw installed"
 else
   success "OpenClaw already installed ($(openclaw --version 2>/dev/null || echo 'version unknown'))"
