@@ -176,12 +176,16 @@ fi
 if command -v ob &>/dev/null; then
   info "Configuring Obsidian auth token from 1Password..."
   OBSIDIAN_AUTH_TOKEN=$(op item get "Obsidian Auth Token" --reveal --fields credential 2>/dev/null || echo "")
+  OBSIDIAN_VAULT_PASSWORD=$(op item get "Obsidian Vault Password" --reveal --fields credential 2>/dev/null || echo "")
   if [ -n "$OBSIDIAN_AUTH_TOKEN" ]; then
     if ! grep -q "OBSIDIAN_AUTH_TOKEN" "$HOME/.bashrc" 2>/dev/null; then
       echo "export OBSIDIAN_AUTH_TOKEN=\"$OBSIDIAN_AUTH_TOKEN\"" >> "$HOME/.bashrc"
     fi
-    export OBSIDIAN_AUTH_TOKEN
-    success "OBSIDIAN_AUTH_TOKEN set from 1Password"
+    if [ -n "$OBSIDIAN_VAULT_PASSWORD" ] && ! grep -q "OBSIDIAN_VAULT_PASSWORD" "$HOME/.bashrc" 2>/dev/null; then
+      echo "export OBSIDIAN_VAULT_PASSWORD=\"$OBSIDIAN_VAULT_PASSWORD\"" >> "$HOME/.bashrc"
+    fi
+    export OBSIDIAN_AUTH_TOKEN OBSIDIAN_VAULT_PASSWORD
+    success "OBSIDIAN_AUTH_TOKEN + OBSIDIAN_VAULT_PASSWORD set from 1Password"
   else
     warn "Could not fetch Obsidian auth token from 1Password — add it manually"
   fi
