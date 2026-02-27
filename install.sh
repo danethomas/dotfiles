@@ -161,7 +161,7 @@ fi
 # ── 11. Claude Code auth (ANTHROPIC_API_KEY from 1Password) ──────────────────
 if command -v claude &>/dev/null; then
   info "Configuring Claude Code auth from 1Password..."
-  ANTHROPIC_API_KEY=$(op item get hznzolei6lgthewq3ptdcgemce --reveal --fields credential 2>/dev/null || echo "")
+  ANTHROPIC_API_KEY=$(op item get "Claude Code oAuth Key" --reveal --fields credential 2>/dev/null || echo "")
   if [ -n "$ANTHROPIC_API_KEY" ]; then
     # Add to ~/.bashrc if not already there
     if ! grep -q "ANTHROPIC_API_KEY" "$HOME/.bashrc" 2>/dev/null; then
