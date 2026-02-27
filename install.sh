@@ -210,6 +210,37 @@ if command -v claude &>/dev/null; then
   fi
 fi
 
+# ── 12. Obsidian Sync setup ───────────────────────────────────────────────────
+if command -v ob &>/dev/null && [ -n "${OBSIDIAN_AUTH_TOKEN:-}" ]; then
+  WORKSPACE=~/.openclaw/workspace
+  if [ ! -f "$WORKSPACE/.obsidian-sync" ]; then
+    info "Setting up Obsidian Sync for workspace vault..."
+    OB_CMD="dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob"
+
+    # Setup vault (uses OBSIDIAN_VAULT_PASSWORD env var if set)
+    VAULT_PASSWORD_FLAG=""
+    [ -n "${OBSIDIAN_VAULT_PASSWORD:-}" ] && VAULT_PASSWORD_FLAG="--password \"$OBSIDIAN_VAULT_PASSWORD\""
+    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-setup --vault \"Notes\" --path $WORKSPACE --device-name \"\$(hostname)\" $VAULT_PASSWORD_FLAG'" \
+      && touch "$WORKSPACE/.obsidian-sync" \
+      && success "Obsidian vault configured"
+
+    # Configure exclusions
+    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-config --path $WORKSPACE --excluded-folders \"projects/essence/snapshots,config-snapshots\"'"
+
+    # Install + enable systemd service
+    if [ -f "$WORKSPACE/config-snapshots/obsidian-sync.service" ]; then
+      mkdir -p ~/.config/systemd/user
+      cp "$WORKSPACE/config-snapshots/obsidian-sync.service" ~/.config/systemd/user/
+      systemctl --user daemon-reload
+      systemctl --user enable obsidian-sync
+      systemctl --user start obsidian-sync
+      success "Obsidian Sync service started"
+    fi
+  else
+    success "Obsidian Sync already configured"
+  fi
+fi
+
 # ── 12. Install + start OpenClaw gateway service ─────────────────────────────
 info "Installing OpenClaw gateway service..."
 openclaw gateway install

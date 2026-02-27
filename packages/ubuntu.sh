@@ -26,7 +26,7 @@ apt_install() {
 }
 
 # ── Base tools ────────────────────────────────────────────────────────────────
-for pkg in curl git unzip jq libsecret-1-0; do
+for pkg in curl git unzip jq libsecret-1-0 gnome-keyring dbus-daemon; do
   apt_install "$pkg"
 done
 
