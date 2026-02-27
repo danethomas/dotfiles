@@ -228,12 +228,12 @@ if command -v ob &>/dev/null && [ -n "${OBSIDIAN_AUTH_TOKEN:-}" ]; then
     # Setup vault (uses OBSIDIAN_VAULT_PASSWORD env var if set)
     VAULT_PASSWORD_FLAG=""
     [ -n "${OBSIDIAN_VAULT_PASSWORD:-}" ] && VAULT_PASSWORD_FLAG="--password \"$OBSIDIAN_VAULT_PASSWORD\""
-    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-setup --vault \"Notes\" --path $VAULT_ROOT --device-name \"\$(hostname)\" $VAULT_PASSWORD_FLAG'" \
+    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-setup --vault \"Notes\" --path $WORKSPACE --device-name \"\$(hostname)\" $VAULT_PASSWORD_FLAG'" \
       && touch "$VAULT_ROOT/.obsidian-sync" \
       && success "Obsidian vault configured"
 
     # Configure exclusions
-    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-config --path $VAULT_ROOT --excluded-folders \"Sparky/projects/essence/snapshots,Sparky/config-snapshots\"'"
+    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-config --path $WORKSPACE --excluded-folders \"projects/essence/snapshots,config-snapshots\"'"
 
     # Install + enable systemd service
     if [ -f "$WORKSPACE/config-snapshots/obsidian-sync.service" ]; then
