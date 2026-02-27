@@ -26,7 +26,7 @@ apt_install() {
 }
 
 # ── Base tools ────────────────────────────────────────────────────────────────
-for pkg in curl git unzip jq; do
+for pkg in curl git unzip jq libsecret-1-0; do
   apt_install "$pkg"
 done
 
@@ -114,6 +114,15 @@ if [ "$(npm config get prefix)" != "$HOME/.npm-global" ]; then
   fi
   export PATH="$HOME/.npm-global/bin:$PATH"
   success "npm prefix set to ~/.npm-global"
+fi
+
+# ── Obsidian Headless ─────────────────────────────────────────────────────────
+if ! command -v ob &>/dev/null; then
+  info "Installing obsidian-headless..."
+  npm install -g obsidian-headless
+  success "obsidian-headless installed (ob)"
+else
+  success "ob already installed"
 fi
 
 # ── Claude Code ───────────────────────────────────────────────────────────────
