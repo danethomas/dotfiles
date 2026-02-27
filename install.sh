@@ -51,15 +51,15 @@ fi
 # ── 1a. Fix PATH for login shells ────────────────────────────────────────────
 # SSH login shells source ~/.profile, not ~/.bashrc. Make ~/.profile source
 # ~/.bashrc so npm-global/bin and other PATH additions are always available.
-if ! grep -q '\.bashrc' ~/.profile 2>/dev/null; then
-  cat >> ~/.profile << 'PROFILE_EOF'
+if ! grep -q '\.bashrc' ~/.bash_profile 2>/dev/null; then
+  cat >> ~/.bash_profile << 'PROFILE_EOF'
 
 # Source .bashrc for interactive login shells (ensures PATH is consistent)
 if [ -f "$HOME/.bashrc" ]; then
   . "$HOME/.bashrc"
 fi
 PROFILE_EOF
-  success "~/.profile configured to source ~/.bashrc"
+  success "~/.bash_profile configured to source ~/.bashrc"
 fi
 
 # ── 2. 1Password sign-in ──────────────────────────────────────────────────────
