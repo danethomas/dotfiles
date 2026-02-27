@@ -158,7 +158,23 @@ else
   success "shaping-skills already present"
 fi
 
-# ── 11. Install + start OpenClaw gateway service ─────────────────────────────
+# ── 11. Claude Code auth (ANTHROPIC_API_KEY from 1Password) ──────────────────
+if command -v claude &>/dev/null; then
+  info "Configuring Claude Code auth from 1Password..."
+  ANTHROPIC_API_KEY=$(op item get hznzolei6lgthewq3ptdcgemce --reveal --fields credential 2>/dev/null || echo "")
+  if [ -n "$ANTHROPIC_API_KEY" ]; then
+    # Add to ~/.bashrc if not already there
+    if ! grep -q "ANTHROPIC_API_KEY" "$HOME/.bashrc" 2>/dev/null; then
+      echo "export ANTHROPIC_API_KEY=\"$ANTHROPIC_API_KEY\"" >> "$HOME/.bashrc"
+    fi
+    export ANTHROPIC_API_KEY
+    success "ANTHROPIC_API_KEY set from 1Password"
+  else
+    warn "Could not fetch Claude Code key from 1Password — run 'op signin' first"
+  fi
+fi
+
+# ── 12. Install + start OpenClaw gateway service ─────────────────────────────
 info "Installing OpenClaw gateway service..."
 openclaw gateway install
 success "Gateway service installed"

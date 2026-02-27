@@ -116,6 +116,15 @@ if [ "$(npm config get prefix)" != "$HOME/.npm-global" ]; then
   success "npm prefix set to ~/.npm-global"
 fi
 
+# ── Claude Code ───────────────────────────────────────────────────────────────
+if ! command -v claude &>/dev/null; then
+  info "Installing Claude Code..."
+  npm install -g @anthropic-ai/claude-code
+  success "Claude Code installed"
+else
+  success "Claude Code already installed ($(claude --version 2>/dev/null | head -1))"
+fi
+
 # ── OpenClaw ──────────────────────────────────────────────────────────────────
 if ! command -v openclaw &>/dev/null; then
   info "Installing OpenClaw..."
