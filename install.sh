@@ -172,6 +172,21 @@ else
   success "shaping-skills already present"
 fi
 
+# ── 11a. Obsidian auth token from 1Password ───────────────────────────────────
+if command -v ob &>/dev/null; then
+  info "Configuring Obsidian auth token from 1Password..."
+  OBSIDIAN_AUTH_TOKEN=$(op item get "Obsidian Auth Token" --reveal --fields credential 2>/dev/null || echo "")
+  if [ -n "$OBSIDIAN_AUTH_TOKEN" ]; then
+    if ! grep -q "OBSIDIAN_AUTH_TOKEN" "$HOME/.bashrc" 2>/dev/null; then
+      echo "export OBSIDIAN_AUTH_TOKEN=\"$OBSIDIAN_AUTH_TOKEN\"" >> "$HOME/.bashrc"
+    fi
+    export OBSIDIAN_AUTH_TOKEN
+    success "OBSIDIAN_AUTH_TOKEN set from 1Password"
+  else
+    warn "Could not fetch Obsidian auth token from 1Password — add it manually"
+  fi
+fi
+
 # ── 11. Claude Code auth (ANTHROPIC_API_KEY from 1Password) ──────────────────
 if command -v claude &>/dev/null; then
   info "Configuring Claude Code auth from 1Password..."
