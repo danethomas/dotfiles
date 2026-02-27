@@ -212,20 +212,28 @@ fi
 
 # ── 12. Obsidian Sync setup ───────────────────────────────────────────────────
 if command -v ob &>/dev/null && [ -n "${OBSIDIAN_AUTH_TOKEN:-}" ]; then
-  WORKSPACE=~/.openclaw/workspace
-  if [ ! -f "$WORKSPACE/.obsidian-sync" ]; then
+  VAULT_ROOT=~/obsidian-vault
+  WORKSPACE="$VAULT_ROOT/Sparky"
+  mkdir -p "$WORKSPACE"
+  # Symlink ~/.openclaw/workspace → obsidian-vault/Sparky so OpenClaw works unchanged
+  if [ ! -L ~/.openclaw/workspace ]; then
+    [ -d ~/.openclaw/workspace ] && mv ~/.openclaw/workspace "$WORKSPACE"
+    ln -s "$WORKSPACE" ~/.openclaw/workspace
+    success "Workspace symlinked: ~/.openclaw/workspace → $WORKSPACE"
+  fi
+  if [ ! -f "$VAULT_ROOT/.obsidian-sync" ]; then
     info "Setting up Obsidian Sync for workspace vault..."
     OB_CMD="dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob"
 
     # Setup vault (uses OBSIDIAN_VAULT_PASSWORD env var if set)
     VAULT_PASSWORD_FLAG=""
     [ -n "${OBSIDIAN_VAULT_PASSWORD:-}" ] && VAULT_PASSWORD_FLAG="--password \"$OBSIDIAN_VAULT_PASSWORD\""
-    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-setup --vault \"Notes\" --path $WORKSPACE --device-name \"\$(hostname)\" $VAULT_PASSWORD_FLAG'" \
-      && touch "$WORKSPACE/.obsidian-sync" \
+    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-setup --vault \"Notes\" --path $VAULT_ROOT --device-name \"\$(hostname)\" $VAULT_PASSWORD_FLAG'" \
+      && touch "$VAULT_ROOT/.obsidian-sync" \
       && success "Obsidian vault configured"
 
     # Configure exclusions
-    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-config --path $WORKSPACE --excluded-folders \"projects/essence/snapshots,config-snapshots\"'"
+    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-config --path $VAULT_ROOT --excluded-folders \"Sparky/projects/essence/snapshots,Sparky/config-snapshots\"'"
 
     # Install + enable systemd service
     if [ -f "$WORKSPACE/config-snapshots/obsidian-sync.service" ]; then
@@ -239,6 +247,14 @@ if command -v ob &>/dev/null && [ -n "${OBSIDIAN_AUTH_TOKEN:-}" ]; then
   else
     success "Obsidian Sync already configured"
   fi
+fi
+
+# ── Workspace git clone (post-symlink) ───────────────────────────────────────
+# If workspace was just created via symlink and isn't a git repo yet, clone it
+if [ ! -d ~/.openclaw/workspace/.git ] && [ -n "${WORKSPACE_REPO:-}" ]; then
+  info "Cloning OpenClaw workspace into obsidian-vault/Sparky..."
+  git clone "git@github.com:$WORKSPACE_REPO.git" ~/.openclaw/workspace
+  success "Workspace cloned"
 fi
 
 # ── 12. Install + start OpenClaw gateway service ─────────────────────────────
