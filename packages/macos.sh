@@ -84,6 +84,15 @@ else
   success "op already installed ($(op --version))"
 fi
 
+# ── Obsidian ──────────────────────────────────────────────────────────────────
+if ! brew list --cask obsidian &>/dev/null; then
+  info "Installing Obsidian..."
+  brew install --cask obsidian
+  success "Obsidian installed (launch it once to set up your vault, then 'obsidian --help' for CLI)"
+else
+  success "Obsidian already installed"
+fi
+
 # ── Docker Desktop ────────────────────────────────────────────────────────────
 if ! command -v docker &>/dev/null; then
   info "Installing Docker Desktop..."
