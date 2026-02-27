@@ -185,6 +185,9 @@ if command -v ob &>/dev/null; then
       echo "export OBSIDIAN_VAULT_PASSWORD=\"$OBSIDIAN_VAULT_PASSWORD\"" >> "$HOME/.bashrc"
     fi
     export OBSIDIAN_AUTH_TOKEN OBSIDIAN_VAULT_PASSWORD
+    # Write clean env file for systemd (can't source .bashrc directly)
+    echo "OBSIDIAN_AUTH_TOKEN=$OBSIDIAN_AUTH_TOKEN" > "$HOME/.config/obsidian-sync.env"
+    chmod 600 "$HOME/.config/obsidian-sync.env"
     success "OBSIDIAN_AUTH_TOKEN + OBSIDIAN_VAULT_PASSWORD set from 1Password"
   else
     warn "Could not fetch Obsidian auth token from 1Password — add it manually"
