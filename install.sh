@@ -212,15 +212,8 @@ fi
 
 # ── 12. Obsidian Sync setup ───────────────────────────────────────────────────
 if command -v ob &>/dev/null && [ -n "${OBSIDIAN_AUTH_TOKEN:-}" ]; then
-  VAULT_ROOT=~/obsidian-vault
-  WORKSPACE="$VAULT_ROOT/Sparky"
-  mkdir -p "$WORKSPACE"
-  # Symlink ~/.openclaw/workspace → obsidian-vault/Sparky so OpenClaw works unchanged
-  if [ ! -L ~/.openclaw/workspace ]; then
-    [ -d ~/.openclaw/workspace ] && mv ~/.openclaw/workspace "$WORKSPACE"
-    ln -s "$WORKSPACE" ~/.openclaw/workspace
-    success "Workspace symlinked: ~/.openclaw/workspace → $WORKSPACE"
-  fi
+  VAULT_ROOT=~/.openclaw/workspace
+  WORKSPACE="$VAULT_ROOT"
   if [ ! -f "$VAULT_ROOT/.obsidian-sync" ]; then
     info "Setting up Obsidian Sync for workspace vault..."
     OB_CMD="dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob"
@@ -228,7 +221,7 @@ if command -v ob &>/dev/null && [ -n "${OBSIDIAN_AUTH_TOKEN:-}" ]; then
     # Setup vault (uses OBSIDIAN_VAULT_PASSWORD env var if set)
     VAULT_PASSWORD_FLAG=""
     [ -n "${OBSIDIAN_VAULT_PASSWORD:-}" ] && VAULT_PASSWORD_FLAG="--password \"$OBSIDIAN_VAULT_PASSWORD\""
-    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-setup --vault \"Notes\" --path $WORKSPACE --device-name \"\$(hostname)\" $VAULT_PASSWORD_FLAG'" \
+    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-setup --vault \"Sparky\" --path $WORKSPACE --device-name \"\$(hostname)\" $VAULT_PASSWORD_FLAG'" \
       && touch "$VAULT_ROOT/.obsidian-sync" \
       && success "Obsidian vault configured"
 
@@ -249,13 +242,6 @@ if command -v ob &>/dev/null && [ -n "${OBSIDIAN_AUTH_TOKEN:-}" ]; then
   fi
 fi
 
-# ── Workspace git clone (post-symlink) ───────────────────────────────────────
-# If workspace was just created via symlink and isn't a git repo yet, clone it
-if [ ! -d ~/.openclaw/workspace/.git ] && [ -n "${WORKSPACE_REPO:-}" ]; then
-  info "Cloning OpenClaw workspace into obsidian-vault/Sparky..."
-  git clone "git@github.com:$WORKSPACE_REPO.git" ~/.openclaw/workspace
-  success "Workspace cloned"
-fi
 
 # ── 12. Install + start OpenClaw gateway service ─────────────────────────────
 info "Installing OpenClaw gateway service..."
