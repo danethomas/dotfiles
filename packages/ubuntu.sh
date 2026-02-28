@@ -163,3 +163,10 @@ if ! command -v gog &>/dev/null; then
 else
   success "gog already installed ($(gog --version 2>/dev/null || echo 'version unknown'))"
 fi
+
+# Configure gog to use file-based keyring (no D-Bus/gnome-keyring needed)
+mkdir -p ~/.config/gogcli
+if ! grep -q '"keyring_backend"' ~/.config/gogcli/config.json 2>/dev/null; then
+  echo '{"keyring_backend":"file"}' > ~/.config/gogcli/config.json
+  success "gog keyring backend set to file"
+fi
