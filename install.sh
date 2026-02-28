@@ -146,7 +146,7 @@ else
 fi
 
 # ── 8. Restore OpenClaw config snapshots (cron jobs, hooks, exec-approvals) ──
-SNAPSHOTS=~/.openclaw/workspace/config-snapshots
+SNAPSHOTS=~/.openclaw/workspace/scripts/openclaw
 if [ -d "$SNAPSHOTS" ]; then
   info "Restoring OpenClaw config snapshots..."
   mkdir -p ~/.openclaw/cron ~/.openclaw/hooks/transforms
@@ -226,12 +226,12 @@ if command -v ob &>/dev/null && [ -n "${OBSIDIAN_AUTH_TOKEN:-}" ]; then
       && success "Obsidian vault configured"
 
     # Configure exclusions
-    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-config --path $WORKSPACE --excluded-folders \"projects/essence/snapshots,config-snapshots\"'"
+    eval "dbus-run-session -- bash -c 'eval \$(echo \"\" | gnome-keyring-daemon --unlock --components=secrets,pkcs11,ssh --daemonize 2>/dev/null); export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID; ob sync-config --path $WORKSPACE --excluded-folders \"projects/essence/snapshots,scripts/openclaw\"'"
 
     # Install + enable systemd service
-    if [ -f "$WORKSPACE/config-snapshots/obsidian-sync.service" ]; then
+    if [ -f "$WORKSPACE/scripts/openclaw/obsidian-sync.service" ]; then
       mkdir -p ~/.config/systemd/user
-      cp "$WORKSPACE/config-snapshots/obsidian-sync.service" ~/.config/systemd/user/
+      cp "$WORKSPACE/scripts/openclaw/obsidian-sync.service" ~/.config/systemd/user/
       systemctl --user daemon-reload
       systemctl --user enable obsidian-sync
       systemctl --user start obsidian-sync
