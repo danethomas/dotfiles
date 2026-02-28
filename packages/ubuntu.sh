@@ -25,6 +25,14 @@ apt_install() {
   fi
 }
 
+# ── Timezone ─────────────────────────────────────────────────────────────────
+if [ "$(timedatectl show --property=Timezone --value 2>/dev/null)" != "Australia/Sydney" ]; then
+  sudo timedatectl set-timezone Australia/Sydney
+  success "Timezone set to Australia/Sydney"
+else
+  success "Timezone already set to Australia/Sydney"
+fi
+
 # ── Base tools ────────────────────────────────────────────────────────────────
 for pkg in curl git unzip jq libsecret-1-0 gnome-keyring dbus-daemon; do
   apt_install "$pkg"
