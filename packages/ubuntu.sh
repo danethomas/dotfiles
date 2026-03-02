@@ -24,6 +24,22 @@ apt_install() {
     success "$1 already installed"
   fi
 }
+# ── Passwordless sudo for ubuntu user ────────────────────────────────────────
+SUDOERS_FILE="/etc/sudoers.d/ubuntu-nopasswd"
+if [ ! -f "$SUDOERS_FILE" ]; then
+  info "Granting passwordless sudo to $USER..."
+  echo "$USER ALL=(ALL) NOPASSWD:ALL" | sudo tee "$SUDOERS_FILE" > /dev/null
+  sudo chmod 440 "$SUDOERS_FILE"
+  success "Passwordless sudo enabled for $USER"
+else
+  success "Passwordless sudo already configured"
+fi
+
+# ── Playwright browser dependencies ──────────────────────────────────────────
+for pkg in libnspr4 libnss3 libasound2t64; do
+  apt_install "$pkg"
+done
+
 
 # ── Timezone ─────────────────────────────────────────────────────────────────
 if [ "$(timedatectl show --property=Timezone --value 2>/dev/null)" != "Australia/Sydney" ]; then
