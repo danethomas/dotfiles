@@ -246,7 +246,38 @@ fi
 # ── 12. Install + start OpenClaw gateway service ─────────────────────────────
 info "Installing OpenClaw gateway service..."
 openclaw gateway install
-success "Gateway service installed"
+# ── 12a. Playwright + OpenClaw browser config (Linux only) ───────────────────
+if [[ "$OSTYPE" != "darwin"* ]]; then
+  info "Installing Playwright globally..."
+  npm install -g playwright
+
+  info "Downloading Playwright Chromium..."
+  NODE_PATH="$HOME/.npm-global/lib/node_modules" \
+    "$HOME/.npm-global/bin/playwright" install chromium
+
+  HEADLESS_SHELL=$(find "$HOME/.cache/ms-playwright" -name "headless_shell" -type f 2>/dev/null | head -1)
+  if [ -n "$HEADLESS_SHELL" ]; then
+    python3 -c "
+import json
+path = '$HOME/.openclaw/openclaw.json'
+with open(path) as f: d = json.load(f)
+d['browser'] = {'enabled': True, 'executablePath': '$HEADLESS_SHELL', 'headless': True, 'noSandbox': True, 'defaultProfile': 'openclaw'}
+with open(path, 'w') as f: json.dump(d, f, indent=2)
+" && success "OpenClaw browser configured"
+
+    mkdir -p "$HOME/.config/systemd/user"
+    cp "$HOME/.openclaw/workspace/scripts/openclaw/playwright-browser.service" \
+       "$HOME/.config/systemd/user/playwright-browser.service" 2>/dev/null || true
+    systemctl --user daemon-reload
+    systemctl --user enable playwright-browser
+    systemctl --user start playwright-browser
+    success "Playwright browser server started"
+  else
+    warn "Could not find Playwright headless_shell — configure browser manually"
+  fi
+fi
+
+
 
 
 
