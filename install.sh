@@ -302,6 +302,59 @@ fi
 
 
 
+# ── pixsum deployment ────────────────────────────────────────────────────────
+if [[ "$OSTYPE" != "darwin"* ]]; then
+  if [ ! -d "$HOME/src/pixsum/.git" ]; then
+    info "Cloning pixsum..."
+    mkdir -p "$HOME/src"
+    git clone git@github.com:danethomas/pixsum.git "$HOME/src/pixsum"
+    cd "$HOME/src/pixsum" && npm install
+    success "pixsum cloned and dependencies installed"
+  else
+    success "pixsum already present"
+  fi
+
+  # Restore .env from 1Password
+  PIXSUM_ENV="$HOME/src/pixsum/.env"
+  OPENROUTER_KEY=$(op read "op://Keys/OpenRouter - Gensum/credential" 2>/dev/null || echo "")
+  PIXSUM_KEY=$(op read "op://Keys/Pixsum API Key/credential" 2>/dev/null || echo "")
+  if [ -n "$OPENROUTER_KEY" ] && [ -n "$PIXSUM_KEY" ]; then
+    cat > "$PIXSUM_ENV" << ENVEOF
+OPENROUTER_API_KEY=$OPENROUTER_KEY
+PIXSUM_API_KEY=$PIXSUM_KEY
+PORT=3000
+CACHE_DIR=./cache
+IMAGE_MODEL=google/gemini-2.5-flash-image
+ENVEOF
+    success "pixsum .env written from 1Password"
+  else
+    warn "Could not fetch pixsum keys from 1Password — write $PIXSUM_ENV manually"
+  fi
+
+  # Install systemd service
+  sudo cp "$HOME/src/pixsum/pixsum.service" /etc/systemd/system/ 2>/dev/null ||   sudo tee /etc/systemd/system/pixsum.service << SVCEOF
+[Unit]
+Description=pixsum.dev AI image placeholder server
+After=network.target
+
+[Service]
+Type=simple
+User=$USER
+WorkingDirectory=$HOME/src/pixsum
+EnvironmentFile=$HOME/src/pixsum/.env
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+SVCEOF
+  sudo systemctl daemon-reload
+  sudo systemctl enable pixsum
+  sudo systemctl start pixsum
+  success "pixsum service started"
+fi
+
 # ── Done ─────────────────────────────────────────────────────────────────────
 echo ""
 echo "✅ Setup complete!"
