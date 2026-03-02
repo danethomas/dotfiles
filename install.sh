@@ -62,6 +62,27 @@ PROFILE_EOF
   success "~/.bash_profile configured to source ~/.bashrc"
 fi
 
+# ── 2. 1Password Service Account Token ───────────────────────────────────────
+# Service token allows non-interactive op access (no op signin needed).
+# Store in 1Password manually as "1Password Service Token - Sparky" in Keys vault.
+if ! grep -q "OP_SERVICE_ACCOUNT_TOKEN" "$HOME/.bashrc" 2>/dev/null; then
+  echo ""
+  echo "🔑 1Password Service Account Token needed for non-interactive access."
+  echo "   Find it in 1Password → Keys → '1Password Service Token - Sparky'"
+  echo -n "   Paste token (or press Enter to skip): "
+  read -r OP_TOKEN
+  if [ -n "$OP_TOKEN" ]; then
+    echo "export OP_SERVICE_ACCOUNT_TOKEN="$OP_TOKEN"" >> "$HOME/.bashrc"
+    export OP_SERVICE_ACCOUNT_TOKEN="$OP_TOKEN"
+    success "OP_SERVICE_ACCOUNT_TOKEN added to ~/.bashrc"
+  else
+    warn "Skipped — some credential steps may require manual op signin"
+  fi
+else
+  export OP_SERVICE_ACCOUNT_TOKEN="$(grep OP_SERVICE_ACCOUNT_TOKEN "$HOME/.bashrc" | sed 's/export OP_SERVICE_ACCOUNT_TOKEN="//;s/"//')"
+  success "OP_SERVICE_ACCOUNT_TOKEN already set"
+fi
+
 # ── 2. 1Password sign-in ──────────────────────────────────────────────────────
 if ! op whoami &>/dev/null; then
   echo ""
