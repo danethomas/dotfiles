@@ -33,6 +33,15 @@ parse_git_branch() {
 }
 PS1='\[\e[0;32m\]\u@\h\[\e[0m\]:\[\e[0;34m\]\w\[\e[0m\]\[\e[0;33m\]$(b=$(parse_git_branch); [ -n "$b" ] && echo " ($b)")\[\e[0m\] \$ '
 
+# ── Terminal compatibility ────────────────────────────────────────────────────
+# Ghostty sets TERM=xterm-ghostty — fall back to xterm-256color on hosts
+# that do not have the Ghostty terminfo installed yet.
+# Better fix: add `shell-integration-features = ssh-terminfo` to your
+# Ghostty config (~/.config/ghostty/config) so it auto-copies terminfo on SSH.
+if [ "$TERM" = "xterm-ghostty" ] && ! infocmp xterm-ghostty &>/dev/null 2>&1; then
+  export TERM=xterm-256color
+fi
+
 # ── Misc ─────────────────────────────────────────────────────────────────────
 export EDITOR=nano
 export LANG=en_US.UTF-8
