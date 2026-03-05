@@ -186,3 +186,35 @@ if ! grep -q '"keyring_backend"' ~/.config/gogcli/config.json 2>/dev/null; then
   echo '{"keyring_backend":"file"}' > ~/.config/gogcli/config.json
   success "gog keyring backend set to file"
 fi
+
+# ── Rust (for building gws) ───────────────────────────────────────────────────
+if ! command -v cargo &>/dev/null; then
+  info "Installing Rust..."
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  source "$HOME/.cargo/env"
+  success "Rust installed ($(cargo --version))"
+else
+  source "$HOME/.cargo/env" 2>/dev/null || true
+  success "Rust already installed ($(cargo --version))"
+fi
+
+# ── build-essential (for Rust compilation) ────────────────────────────────────
+apt_install build-essential
+
+# ── gws (Google Workspace CLI - official) ─────────────────────────────────────
+if ! command -v gws &>/dev/null; then
+  info "Installing gws (building from source for ARM64)..."
+  GWS_DIR="$HOME/src/gws-cli"
+  if [ ! -d "$GWS_DIR" ]; then
+    mkdir -p "$HOME/src"
+    git clone https://github.com/googleworkspace/cli.git "$GWS_DIR"
+  fi
+  cd "$GWS_DIR"
+  git pull --ff-only
+  source "$HOME/.cargo/env"
+  cargo build --release
+  sudo cp target/release/gws /usr/local/bin/
+  success "gws installed ($(gws --version))"
+else
+  success "gws already installed ($(gws --version))"
+fi
