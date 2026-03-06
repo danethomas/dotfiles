@@ -167,6 +167,15 @@ else
   success "OpenClaw already installed ($(openclaw --version 2>/dev/null || echo 'version unknown'))"
 fi
 
+# ── Skills (skills.sh) ────────────────────────────────────────────────────────
+if ! command -v skills &>/dev/null; then
+  info "Installing skills..."
+  npm install -g skills
+  success "skills installed (skills.sh)"
+else
+  success "skills already installed ($(skills --version 2>/dev/null || echo 'version unknown'))"
+fi
+
 # ── gog (Google Workspace CLI) ────────────────────────────────────────────────
 if ! command -v gog &>/dev/null; then
   info "Installing gog (linux_arm64 binary)..."
