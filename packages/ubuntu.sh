@@ -176,6 +176,12 @@ else
   success "skills already installed ($(skills --version 2>/dev/null || echo 'version unknown'))"
 fi
 
+# ── skills.sh global skills ───────────────────────────────────────────────────
+info "Installing global skills..."
+skills add https://github.com/vercel-labs/skills --skill find-skills --global --yes 2>/dev/null || true
+skills add shadcn/ui --global --yes 2>/dev/null || true
+success "Global skills installed"
+
 # ── gog (Google Workspace CLI) ────────────────────────────────────────────────
 if ! command -v gog &>/dev/null; then
   info "Installing gog (linux_arm64 binary)..."
