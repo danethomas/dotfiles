@@ -15,6 +15,8 @@ fi
 source $ZSH/oh-my-zsh.sh
 
 # ── PATH ─────────────────────────────────────────────────────────────────────
+export PATH="$HOME/.local/bin:$PATH"
+
 # npm global
 export PATH="$HOME/.npm-global/bin:$PATH"
 
