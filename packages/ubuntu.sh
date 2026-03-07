@@ -50,9 +50,26 @@ else
 fi
 
 # ── Base tools ────────────────────────────────────────────────────────────────
-for pkg in curl git unzip jq libsecret-1-0 gnome-keyring dbus-daemon; do
+for pkg in curl git unzip jq zsh libsecret-1-0 gnome-keyring dbus-daemon; do
   apt_install "$pkg"
 done
+
+# ── Oh My Zsh ────────────────────────────────────────────────────────────────
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  info "Installing Oh My Zsh..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  success "Oh My Zsh installed"
+else
+  success "Oh My Zsh already installed"
+fi
+
+# ── Set zsh as default shell ─────────────────────────────────────────────────
+if [ "$SHELL" != "$(which zsh)" ]; then
+  sudo chsh -s "$(which zsh)" "$USER"
+  success "zsh set as default shell"
+else
+  success "zsh already default shell"
+fi
 
 # ── Node.js (via NodeSource) ──────────────────────────────────────────────────
 if ! command -v node &>/dev/null; then
