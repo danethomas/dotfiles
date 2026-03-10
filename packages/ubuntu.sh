@@ -50,7 +50,7 @@ else
 fi
 
 # ── Base tools ────────────────────────────────────────────────────────────────
-for pkg in curl git unzip jq zsh libsecret-1-0 gnome-keyring dbus-daemon; do
+for pkg in curl git unzip jq zsh libsecret-1-0 gnome-keyring dbus-daemon ripgrep; do
   apt_install "$pkg"
 done
 
